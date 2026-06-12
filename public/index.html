@@ -2273,15 +2273,6 @@ $('form-signup').addEventListener('submit', async e => {
   setLoading('btn-signup-submit','spin-signup','signup-btn-text', true, 'Checking...');
 
   try {
-    // Check duplicate phone
-    const q    = query(collection(db, 'users'), where('phoneNumber','==', phoneE164));
-    const snap = await getDocs(q);
-    if (!snap.empty) {
-      showAlert('signup-alert', 'This phone number is already registered. Please log in instead.', 'error');
-      setLoading('btn-signup-submit','spin-signup','signup-btn-text', false, 'Send Verification Code');
-      return;
-    }
-
     pendingUserData = { firstName: first, lastName: last, phoneNumber: phoneE164, state, password: pass };
 
     initRecaptcha('recaptcha-container');
@@ -2324,6 +2315,21 @@ $('btn-verify-otp').addEventListener('click', async () => {
     const uid    = result.user.uid;
 
     // ─── STEP 5: CREATE FIRESTORE USER ───────────────────────
+    // Check for duplicate phone AFTER auth (user is now authenticated)
+    const q    = query(collection(db, 'users'), where('phoneNumber','==', pendingUserData.phoneNumber));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      // Phone already registered — sign out and prompt login
+      await signOut(auth);
+      showAlert('otp-alert', 'This number is already registered. Please log in instead.', 'error');
+      setTimeout(() => {
+        hideAllOverlays();
+        showOverlay('login');
+      }, 2000);
+      pendingUserData = null;
+      return;
+    }
+
     // Hash the password with SHA-256 before storing
     const encoder  = new TextEncoder();
     const hashBuf  = await crypto.subtle.digest('SHA-256', encoder.encode(pendingUserData.password));
