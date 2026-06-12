@@ -1127,6 +1127,30 @@
   .xo-resend a:hover { text-decoration: underline; }
   .xo-resend a.disabled { color: var(--ink-faint); pointer-events: none; }
 
+  .xo-btn-google {
+    width: 100%;
+    padding: 12px;
+    background: white;
+    color: #3c4043;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .xo-btn-google:hover {
+    background: #f8f9fa;
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+  }
+
   #recaptcha-container { margin: 12px 0; }
 
   .spinner {
@@ -1807,6 +1831,15 @@
     <h2 id="signup-title">Create your account</h2>
     <p class="xo-modal-sub">Start your 14-day free trial. No credit card required.</p>
     <div class="xo-alert" id="signup-alert"></div>
+
+    <!-- Google Button -->
+    <button class="xo-btn-google" id="btn-google-signup">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/></svg>
+      Continue with Google
+    </button>
+
+    <div class="xo-divider">or sign up with email</div>
+
     <form id="form-signup" novalidate autocomplete="off">
       <div class="xo-form-row">
         <div class="xo-field">
@@ -1821,17 +1854,13 @@
         </div>
       </div>
       <div class="xo-field">
-        <label for="su-phone">Mobile Number</label>
-        <div class="xo-phone-wrap">
-          <span class="xo-phone-prefix">+</span>
-          <input type="tel" id="su-phone" placeholder="2348012345678" autocomplete="tel"
-            style="font-family:'JetBrains Mono',monospace;">
-        </div>
-        <span class="xo-field-error" id="err-phone">Enter a valid international number (e.g. 2348012345678).</span>
+        <label for="su-email">Email Address</label>
+        <input type="email" id="su-email" placeholder="e.g. ifeanyi@email.com" autocomplete="email">
+        <span class="xo-field-error" id="err-email">Enter a valid email address.</span>
       </div>
       <div class="xo-field">
         <label for="su-state">State / Region</label>
-        <input type="text" id="su-state" placeholder="e.g. Lagos" autocomplete="address-level1">
+        <input type="text" id="su-state" placeholder="e.g. Enugu" autocomplete="address-level1">
         <span class="xo-field-error" id="err-state">State is required.</span>
       </div>
       <div class="xo-field">
@@ -1844,10 +1873,9 @@
         <input type="password" id="su-pass2" placeholder="Re-enter password" autocomplete="new-password">
         <span class="xo-field-error" id="err-pass2">Passwords do not match.</span>
       </div>
-      <div id="recaptcha-container"></div>
       <button type="submit" class="xo-btn-submit" id="btn-signup-submit">
         <span class="spinner" id="spin-signup"></span>
-        <span id="signup-btn-text">Send Verification Code</span>
+        <span id="signup-btn-text">Create Account</span>
       </button>
     </form>
     <div class="xo-switch">
@@ -1857,34 +1885,34 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
-     OTP VERIFICATION MODAL
+     EMAIL VERIFICATION MODAL
 ════════════════════════════════════════════════════════════ -->
-<div class="xo-overlay" id="overlay-otp">
-  <div class="xo-modal" role="dialog" aria-modal="true" aria-labelledby="otp-title">
-    <button class="xo-modal-close" id="close-otp" aria-label="Close">✕</button>
+<div class="xo-overlay" id="overlay-verify">
+  <div class="xo-modal" role="dialog" aria-modal="true" aria-labelledby="verify-title">
     <div class="xo-modal-logo">
       <div class="nav-logo-mark"></div>
       <span>Xero Software Inc.</span>
     </div>
-    <h2 id="otp-title">Verify your number</h2>
-    <p class="xo-modal-sub">We sent a 6-digit code to:</p>
-    <div class="xo-phone-readonly" id="otp-display-phone"></div>
-    <div class="xo-alert" id="otp-alert"></div>
-    <div class="otp-inputs" id="otp-boxes">
-      <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 1">
-      <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 2">
-      <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 3">
-      <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 4">
-      <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 5">
-      <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 6">
-    </div>
-    <button class="xo-btn-submit" id="btn-verify-otp">
-      <span class="spinner" id="spin-otp"></span>
-      <span id="otp-btn-text">Verify &amp; Create Account</span>
-    </button>
-    <div class="xo-resend">
-      Didn't receive it? <a id="resend-otp">Resend OTP</a>
-      <span id="resend-timer"></span>
+    <div style="text-align:center;padding:16px 0;">
+      <div style="font-size:3rem;margin-bottom:16px;">📧</div>
+      <h2 id="verify-title" style="margin-bottom:10px;">Check your email</h2>
+      <p class="xo-modal-sub" style="margin:0 auto 20px;">
+        We sent a verification link to:<br>
+        <strong id="verify-email-display" style="color:var(--ink);"></strong>
+      </p>
+      <div class="xo-alert" id="verify-alert"></div>
+      <p style="font-size:0.85rem;color:var(--ink-muted);margin-bottom:24px;line-height:1.6;">
+        Click the link in the email to verify your account.<br>
+        Then come back and click the button below.
+      </p>
+      <button class="xo-btn-submit" id="btn-check-verified" style="margin-bottom:12px;">
+        <span class="spinner" id="spin-verify"></span>
+        <span id="verify-btn-text">I've verified my email ✓</span>
+      </button>
+      <button class="xo-btn-secondary" id="btn-resend-verify">Resend verification email</button>
+      <div style="margin-top:16px;font-size:0.8rem;color:var(--ink-faint);">
+        Wrong email? <a id="btn-back-signup" style="color:var(--accent);cursor:pointer;font-weight:600;">Go back</a>
+      </div>
     </div>
   </div>
 </div>
@@ -1902,22 +1930,29 @@
     <h2 id="login-title">Welcome back</h2>
     <p class="xo-modal-sub">Sign in to access your trading dashboard.</p>
     <div class="xo-alert" id="login-alert"></div>
+
+    <!-- Google Button -->
+    <button class="xo-btn-google" id="btn-google-login">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/></svg>
+      Continue with Google
+    </button>
+
+    <div class="xo-divider">or sign in with email</div>
+
     <form id="form-login" novalidate>
       <div class="xo-field">
-        <label for="li-phone">Mobile Number</label>
-        <div class="xo-phone-wrap">
-          <span class="xo-phone-prefix">+</span>
-          <input type="tel" id="li-phone" placeholder="2348012345678" autocomplete="tel"
-            style="font-family:'JetBrains Mono',monospace;">
-        </div>
-        <span class="xo-field-error" id="err-li-phone">Enter a valid international number.</span>
+        <label for="li-email">Email Address</label>
+        <input type="email" id="li-email" placeholder="your@email.com" autocomplete="email">
+        <span class="xo-field-error" id="err-li-email">Enter a valid email address.</span>
       </div>
       <div class="xo-field">
         <label for="li-pass">Password</label>
         <input type="password" id="li-pass" placeholder="Your password" autocomplete="current-password">
         <span class="xo-field-error" id="err-li-pass">Password is required.</span>
       </div>
-      <div id="recaptcha-container-login"></div>
+      <div style="text-align:right;margin-top:-8px;margin-bottom:16px;">
+        <a id="btn-forgot-password" style="font-size:0.8rem;color:var(--accent);cursor:pointer;font-weight:500;">Forgot password?</a>
+      </div>
       <button type="submit" class="xo-btn-submit" id="btn-login-submit">
         <span class="spinner" id="spin-login"></span>
         <span id="login-btn-text">Log in</span>
@@ -2086,20 +2121,18 @@
 </script>
 
 <!-- ═══════════════════════════════════════════════════════════
-     FIREBASE SDK v9 (modular via CDN compat build)
+     FIREBASE SDK v9 — Email/Password + Google Auth
 ════════════════════════════════════════════════════════════ -->
 <script type="module">
-// ─── FIREBASE CONFIG ────────────────────────────────────────
-// ⚠️  REPLACE these values with your own Firebase project config
-// Get them from: Firebase Console → Project Settings → Your apps → SDK setup
-import { initializeApp }          from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber,
-         signInWithCustomToken, onAuthStateChanged, signOut }
-                                   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getFirestore, doc, setDoc, getDoc,
-         query, collection, where, getDocs, serverTimestamp }
-                                   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+         sendEmailVerification, GoogleAuthProvider, signInWithPopup,
+         onAuthStateChanged, signOut, sendPasswordResetEmail, reload }
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDoc, serverTimestamp }
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
+// ─── FIREBASE CONFIG ─────────────────────────────────────────
 const firebaseConfig = {
   apiKey:            "AIzaSyAREzK__enZUQzwrLBOhz1LTWZEHJABzzw",
   authDomain:        "xero-891ec.firebaseapp.com",
@@ -2109,16 +2142,13 @@ const firebaseConfig = {
   appId:             "1:1062274786111:web:68371868118e0b32d3698a"
 };
 
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
+const app      = initializeApp(firebaseConfig);
+const auth     = getAuth(app);
+const db       = getFirestore(app);
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 
-// ─── STATE ──────────────────────────────────────────────────
-let confirmationResult = null;
-let pendingUserData    = null;
-let resendTimer        = null;
-
-// ─── DOM HELPERS ────────────────────────────────────────────
+// ─── DOM HELPERS ─────────────────────────────────────────────
 const $  = id => document.getElementById(id);
 const ov = id => document.getElementById('overlay-' + id);
 
@@ -2137,365 +2167,73 @@ function showAlert(id, msg, type = 'error') {
   el.className = 'xo-alert show ' + type;
 }
 function clearAlert(id) {
-  const el = $(id);
-  el.className = 'xo-alert';
-  el.textContent = '';
+  const el = $(id); el.className = 'xo-alert'; el.textContent = '';
 }
 function setLoading(btnId, spinId, textId, loading, label) {
   $(btnId).disabled = loading;
   $(spinId).className = 'spinner' + (loading ? ' show' : '');
   if (label) $(textId).textContent = label;
 }
-function fieldError(errId, inputEl, show, msg = '') {
+function fieldError(errId, inputEl, show, msg) {
   const err = $(errId);
   if (show) {
-    err.textContent = msg || err.textContent;
+    if (msg) err.textContent = msg;
     err.classList.add('show');
-    inputEl.classList.add('error');
+    inputEl && inputEl.classList.add('error');
   } else {
     err.classList.remove('show');
-    inputEl.classList.remove('error');
+    inputEl && inputEl.classList.remove('error');
   }
 }
+function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
 
-// ─── NAV BUTTON WIRING ──────────────────────────────────────
+// ─── NAV WIRING ──────────────────────────────────────────────
 $('btn-open-login').addEventListener('click',  () => { clearAlert('login-alert');  showOverlay('login');  });
 $('btn-open-signup').addEventListener('click', () => { clearAlert('signup-alert'); showOverlay('signup'); });
 $('close-signup').addEventListener('click', hideAllOverlays);
-$('close-otp').addEventListener('click',    hideAllOverlays);
 $('close-login').addEventListener('click',  hideAllOverlays);
-
 $('switch-to-login').addEventListener('click',  () => { hideAllOverlays(); setTimeout(() => showOverlay('login'),  80); });
 $('switch-to-signup').addEventListener('click', () => { hideAllOverlays(); setTimeout(() => showOverlay('signup'), 80); });
+$('btn-back-signup').addEventListener('click',  () => { hideAllOverlays(); setTimeout(() => showOverlay('signup'), 80); });
 
 document.querySelectorAll('.xo-overlay').forEach(o => {
   o.addEventListener('click', e => { if (e.target === o) hideAllOverlays(); });
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') hideAllOverlays(); });
 
-// ─── OTP INPUT BOXES ────────────────────────────────────────
-const otpBoxes = Array.from(document.querySelectorAll('#otp-boxes input'));
-otpBoxes.forEach((box, i) => {
-  box.addEventListener('input', () => {
-    box.value = box.value.replace(/\D/g, '');
-    if (box.value.length === 1) {
-      box.classList.add('filled');
-      if (i < otpBoxes.length - 1) otpBoxes[i + 1].focus();
-    } else {
-      box.classList.remove('filled');
-    }
-  });
-  box.addEventListener('keydown', e => {
-    if (e.key === 'Backspace' && !box.value && i > 0) otpBoxes[i - 1].focus();
-  });
-  box.addEventListener('paste', e => {
-    const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
-    if (pasted.length === 6) {
-      otpBoxes.forEach((b, idx) => {
-        b.value = pasted[idx] || '';
-        b.classList.toggle('filled', !!b.value);
-      });
-      otpBoxes[5].focus();
-      e.preventDefault();
-    }
-  });
-});
-function getOTP() { return otpBoxes.map(b => b.value).join(''); }
-function clearOTP() { otpBoxes.forEach(b => { b.value = ''; b.classList.remove('filled'); }); }
-
-// ─── RECAPTCHA SETUP ────────────────────────────────────────
-function initRecaptcha(containerId) {
-  if (window.xeroRecaptcha) {
-    try { window.xeroRecaptcha.clear(); } catch(e) {}
-  }
-  window.xeroRecaptcha = new RecaptchaVerifier(auth, containerId, {
-    size: 'invisible',
-    callback: () => {}
-  });
+// ─── SAVE USER TO FIRESTORE ──────────────────────────────────
+async function saveUserToFirestore(uid, data) {
+  await setDoc(doc(db, 'users', uid), {
+    firstName:        data.firstName || '',
+    lastName:         data.lastName  || '',
+    email:            data.email     || '',
+    state:            data.state     || '',
+    verified:         true,
+    subscriptionPlan: 'Free Trial',
+    accountStatus:    'Active',
+    provider:         data.provider  || 'email',
+    createdAt:        serverTimestamp(),
+  }, { merge: true });
 }
 
-// ─── RESEND TIMER ────────────────────────────────────────────
-function startResendTimer(seconds = 60) {
-  const link   = $('resend-otp');
-  const timer  = $('resend-timer');
-  let remaining = seconds;
-  link.classList.add('disabled');
-  clearInterval(resendTimer);
-  resendTimer = setInterval(() => {
-    remaining--;
-    timer.textContent = ` (${remaining}s)`;
-    if (remaining <= 0) {
-      clearInterval(resendTimer);
-      link.classList.remove('disabled');
-      timer.textContent = '';
-    }
-  }, 1000);
+// ─── OPEN DASHBOARD ──────────────────────────────────────────
+async function openDashboard(user) {
+  try {
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    const d    = snap.exists() ? snap.data() : { firstName: user.displayName?.split(' ')[0] || 'User' };
+    const name = d.firstName + (d.lastName ? ' ' + d.lastName : '');
+    updateNavLoggedIn(name);
+    const dash = $('dashboard-page');
+    dash.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    $('dash-welcome').textContent  = `Welcome, ${d.firstName} 👋`;
+    if ($('dash-sub'))  $('dash-sub').textContent  = `${d.email || user.email} · ${d.subscriptionPlan || 'Free Trial'}`;
+    if ($('dash-plan')) $('dash-plan').textContent = d.subscriptionPlan || 'Free Trial';
+  } catch(e) {
+    $('dashboard-page').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
 }
-
-// ─── PHONE NORMALISE ────────────────────────────────────────
-function normalisePhone(raw) {
-  const digits = raw.replace(/\D/g,'');
-  return '+' + digits;
-}
-function isValidPhone(raw) {
-  const digits = raw.replace(/\D/g,'');
-  return digits.length >= 7 && digits.length <= 15;
-}
-
-// ─── STEP 2: SIGN UP FORM → SEND OTP ────────────────────────
-$('form-signup').addEventListener('submit', async e => {
-  e.preventDefault();
-  clearAlert('signup-alert');
-
-  const first  = $('su-first').value.trim();
-  const last   = $('su-last').value.trim();
-  const phone  = $('su-phone').value.trim();
-  const state  = $('su-state').value.trim();
-  const pass   = $('su-pass').value;
-  const pass2  = $('su-pass2').value;
-
-  let valid = true;
-  fieldError('err-first',  $('su-first'),  !first,  'First name is required.');    if (!first)  valid = false;
-  fieldError('err-last',   $('su-last'),   !last,   'Last name is required.');     if (!last)   valid = false;
-  fieldError('err-phone',  $('su-phone'),  !isValidPhone(phone), 'Enter a valid international number (e.g. 2348012345678).'); if (!isValidPhone(phone)) valid = false;
-  fieldError('err-state',  $('su-state'),  !state,  'State is required.');         if (!state)  valid = false;
-  fieldError('err-pass',   $('su-pass'),   pass.length < 8, 'Password must be at least 8 characters.'); if (pass.length < 8) valid = false;
-  fieldError('err-pass2',  $('su-pass2'),  pass !== pass2, 'Passwords do not match.'); if (pass !== pass2) valid = false;
-  if (!valid) return;
-
-  // Remove existing error states on valid fields
-  ['su-first','su-last','su-phone','su-state','su-pass','su-pass2'].forEach(id => {
-    $(id).classList.remove('error');
-  });
-
-  const phoneE164 = normalisePhone(phone);
-
-  setLoading('btn-signup-submit','spin-signup','signup-btn-text', true, 'Checking...');
-
-  try {
-    pendingUserData = { firstName: first, lastName: last, phoneNumber: phoneE164, state, password: pass };
-
-    initRecaptcha('recaptcha-container');
-    setLoading('btn-signup-submit','spin-signup','signup-btn-text', true, 'Sending OTP...');
-
-    confirmationResult = await signInWithPhoneNumber(auth, phoneE164, window.xeroRecaptcha);
-
-    $('otp-display-phone').textContent = phoneE164;
-    clearOTP();
-    clearAlert('otp-alert');
-    startResendTimer(60);
-    hideAllOverlays();
-    showOverlay('otp');
-
-  } catch (err) {
-    console.error('OTP send error:', err);
-    showAlert('signup-alert', friendlyError(err), 'error');
-  } finally {
-    setLoading('btn-signup-submit','spin-signup','signup-btn-text', false, 'Send Verification Code');
-  }
-});
-
-// ─── STEP 4: VERIFY OTP ─────────────────────────────────────
-$('btn-verify-otp').addEventListener('click', async () => {
-  clearAlert('otp-alert');
-  const code = getOTP();
-  if (code.length < 6) {
-    showAlert('otp-alert', 'Please enter the complete 6-digit code.', 'error');
-    return;
-  }
-  if (!confirmationResult) {
-    showAlert('otp-alert', 'Session expired. Please go back and request a new code.', 'error');
-    return;
-  }
-
-  setLoading('btn-verify-otp','spin-otp','otp-btn-text', true, 'Verifying...');
-
-  try {
-    const result = await confirmationResult.confirm(code);
-    const uid    = result.user.uid;
-
-    // ─── STEP 5: CREATE FIRESTORE USER ───────────────────────
-    // Check for duplicate phone AFTER auth (user is now authenticated)
-    const q    = query(collection(db, 'users'), where('phoneNumber','==', pendingUserData.phoneNumber));
-    const snap = await getDocs(q);
-    if (!snap.empty) {
-      // Phone already registered — sign out and prompt login
-      await signOut(auth);
-      showAlert('otp-alert', 'This number is already registered. Please log in instead.', 'error');
-      setTimeout(() => {
-        hideAllOverlays();
-        showOverlay('login');
-      }, 2000);
-      pendingUserData = null;
-      return;
-    }
-
-    // Hash the password with SHA-256 before storing
-    const encoder  = new TextEncoder();
-    const hashBuf  = await crypto.subtle.digest('SHA-256', encoder.encode(pendingUserData.password));
-    const hashHex  = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2,'0')).join('');
-
-    if (pendingUserData.isLogin) {
-      // LOGIN flow — fetch fresh user data then open dashboard
-      try {
-        const userSnap = await getDoc(doc(db, 'users', result.user.uid));
-        const ud = userSnap.exists() ? userSnap.data() : pendingUserData;
-        hideAllOverlays();
-        openDashboard(ud.firstName, ud);
-      } catch(e) {
-        hideAllOverlays();
-        openDashboard(pendingUserData.firstName, pendingUserData);
-      }
-      pendingUserData = null;
-      return;
-    }
-
-    await setDoc(doc(db, 'users', uid), {
-      firstName:        pendingUserData.firstName,
-      lastName:         pendingUserData.lastName,
-      phoneNumber:      pendingUserData.phoneNumber,
-      state:            pendingUserData.state,
-      passwordHash:     hashHex,
-      verified:         true,
-      subscriptionPlan: 'Free Trial',
-      accountStatus:    'Active',
-      createdAt:        serverTimestamp()
-    });
-
-    showAlert('otp-alert', '✓ Account created successfully! Redirecting...', 'success');
-    setTimeout(() => {
-      hideAllOverlays();
-      openDashboard(pendingUserData.firstName, pendingUserData);
-      pendingUserData = null;
-    }, 1400);
-
-  } catch (err) {
-    console.error('OTP verify error:', err);
-    if (err.code === 'auth/invalid-verification-code') {
-      showAlert('otp-alert', 'Incorrect code. Please check and try again.', 'error');
-    } else {
-      showAlert('otp-alert', friendlyError(err), 'error');
-    }
-  } finally {
-    setLoading('btn-verify-otp','spin-otp','otp-btn-text', false, 'Verify & Create Account');
-  }
-});
-
-// ─── RESEND OTP ─────────────────────────────────────────────
-$('resend-otp').addEventListener('click', async () => {
-  if (!pendingUserData) return;
-  clearAlert('otp-alert');
-  try {
-    initRecaptcha('recaptcha-container');
-    confirmationResult = await signInWithPhoneNumber(auth, pendingUserData.phoneNumber, window.xeroRecaptcha);
-    clearOTP();
-    startResendTimer(60);
-    showAlert('otp-alert', 'A new code has been sent to your number.', 'info');
-  } catch(err) {
-    showAlert('otp-alert', friendlyError(err), 'error');
-  }
-});
-
-// ─── STEP 6: LOGIN ──────────────────────────────────────────
-$('form-login').addEventListener('submit', async e => {
-  e.preventDefault();
-  clearAlert('login-alert');
-
-  const phone = $('li-phone').value.trim();
-  const pass  = $('li-pass').value;
-
-  let valid = true;
-  fieldError('err-li-phone', $('li-phone'), !isValidPhone(phone), 'Enter a valid international number.'); if (!isValidPhone(phone)) valid = false;
-  fieldError('err-li-pass',  $('li-pass'),  !pass, 'Password is required.'); if (!pass) valid = false;
-  if (!valid) return;
-
-  const phoneE164 = normalisePhone(phone);
-  setLoading('btn-login-submit','spin-login','login-btn-text', true, 'Checking...');
-
-  try {
-    // Step 1: Look up user record in Firestore by phone
-    const q    = query(collection(db, 'users'), where('phoneNumber','==', phoneE164));
-    const snap = await getDocs(q);
-
-    if (snap.empty) {
-      showAlert('login-alert', 'No account found with this number. Please sign up.', 'error');
-      setLoading('btn-login-submit','spin-login','login-btn-text', false, 'Log in');
-      return;
-    }
-
-    const userData = snap.docs[0].data();
-
-    if (!userData.verified) {
-      showAlert('login-alert', 'Account not verified. Please complete sign-up first.', 'error');
-      setLoading('btn-login-submit','spin-login','login-btn-text', false, 'Log in');
-      return;
-    }
-
-    if (userData.accountStatus !== 'Active') {
-      showAlert('login-alert', 'This account has been suspended. Contact support.', 'error');
-      setLoading('btn-login-submit','spin-login','login-btn-text', false, 'Log in');
-      return;
-    }
-
-    // Step 2: Verify password matches stored hash
-    // We store a simple SHA-256 hash client-side (upgrade to Cloud Functions + bcrypt for production)
-    const encoder   = new TextEncoder();
-    const hashBuf   = await crypto.subtle.digest('SHA-256', encoder.encode(pass));
-    const hashHex   = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2,'0')).join('');
-
-    if (userData.passwordHash && userData.passwordHash !== hashHex) {
-      showAlert('login-alert', 'Incorrect password. Please try again.', 'error');
-      setLoading('btn-login-submit','spin-login','login-btn-text', false, 'Log in');
-      return;
-    }
-
-    // Step 3: Password OK — send OTP for final identity verification
-    pendingUserData = {
-      firstName:   userData.firstName,
-      lastName:    userData.lastName,
-      phoneNumber: phoneE164,
-      isLogin:     true
-    };
-
-    initRecaptcha('recaptcha-container-login');
-    setLoading('btn-login-submit','spin-login','login-btn-text', true, 'Sending OTP...');
-
-    confirmationResult = await signInWithPhoneNumber(auth, phoneE164, window.xeroRecaptcha);
-    $('otp-display-phone').textContent = phoneE164;
-    clearOTP();
-    clearAlert('otp-alert');
-    startResendTimer(60);
-    $('otp-btn-text').textContent = 'Verify & Log in';
-    hideAllOverlays();
-    showOverlay('otp');
-
-  } catch (err) {
-    console.error('Login error:', err);
-    showAlert('login-alert', friendlyError(err), 'error');
-  } finally {
-    setLoading('btn-login-submit','spin-login','login-btn-text', false, 'Log in');
-  }
-});
-
-// ─── AUTH STATE OBSERVER ────────────────────────────────────
-onAuthStateChanged(auth, async user => {
-  if (user) {
-    try {
-      const snap = await getDoc(doc(db, 'users', user.uid));
-      if (snap.exists()) {
-        const d = snap.data();
-        updateNavLoggedIn(d.firstName + ' ' + d.lastName);
-        // If page was reloaded while logged in, restore dashboard
-        if ($('dashboard-page').style.display === 'none' || !$('dashboard-page').style.display) {
-          openDashboard(d.firstName, d);
-        }
-      }
-    } catch(e) { /* no-op */ }
-  } else {
-    updateNavLoggedOut();
-    if ($('dashboard-page')) $('dashboard-page').style.display = 'none';
-  }
-});
 
 function updateNavLoggedIn(name) {
   $('nav-cta-guest').style.display = 'none';
@@ -2507,7 +2245,7 @@ function updateNavLoggedOut() {
   $('nav-cta-user').style.display  = 'none';
 }
 
-// ─── LOGOUT ─────────────────────────────────────────────────
+// ─── LOGOUT ──────────────────────────────────────────────────
 async function handleLogout() {
   await signOut(auth);
   $('dashboard-page').style.display = 'none';
@@ -2515,36 +2253,207 @@ async function handleLogout() {
   updateNavLoggedOut();
 }
 window.handleLogout = handleLogout;
-
 $('btn-logout').addEventListener('click', handleLogout);
 
-// ─── DASHBOARD ──────────────────────────────────────────────
-function openDashboard(firstName, userData = {}) {
-  const dash = $('dashboard-page');
-  dash.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-  $('dash-welcome').textContent = 'Welcome, ' + firstName + ' 👋';
-  if ($('dash-sub')) {
-    $('dash-sub').textContent = `Logged in as ${userData.firstName || firstName} ${userData.lastName || ''} · ${userData.phoneNumber || ''}`;
+// ─── AUTH STATE ──────────────────────────────────────────────
+onAuthStateChanged(auth, async user => {
+  if (user && user.emailVerified) {
+    updateNavLoggedIn(user.displayName || user.email);
+  } else {
+    updateNavLoggedOut();
+    if ($('dashboard-page')) $('dashboard-page').style.display = 'none';
   }
-  if ($('dash-plan') && userData.subscriptionPlan) {
-    $('dash-plan').textContent = userData.subscriptionPlan;
+});
+
+// ════════════════════════════════════════════════════════════
+//  SIGN UP — Email/Password
+// ════════════════════════════════════════════════════════════
+$('form-signup').addEventListener('submit', async e => {
+  e.preventDefault();
+  clearAlert('signup-alert');
+
+  const first = $('su-first').value.trim();
+  const last  = $('su-last').value.trim();
+  const email = $('su-email').value.trim();
+  const state = $('su-state').value.trim();
+  const pass  = $('su-pass').value;
+  const pass2 = $('su-pass2').value;
+
+  let valid = true;
+  fieldError('err-first', $('su-first'), !first,              'First name is required.');    if (!first)  valid = false;
+  fieldError('err-last',  $('su-last'),  !last,               'Last name is required.');     if (!last)   valid = false;
+  fieldError('err-email', $('su-email'), !isValidEmail(email),'Enter a valid email address.'); if (!isValidEmail(email)) valid = false;
+  fieldError('err-state', $('su-state'), !state,              'State is required.');         if (!state)  valid = false;
+  fieldError('err-pass',  $('su-pass'),  pass.length < 8,     'Password must be at least 8 characters.'); if (pass.length < 8) valid = false;
+  fieldError('err-pass2', $('su-pass2'), pass !== pass2,      'Passwords do not match.');   if (pass !== pass2) valid = false;
+  if (!valid) return;
+
+  setLoading('btn-signup-submit', 'spin-signup', 'signup-btn-text', true, 'Creating account…');
+
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await saveUserToFirestore(cred.user.uid, { firstName: first, lastName: last, email, state, provider: 'email' });
+    await sendEmailVerification(cred.user);
+    await signOut(auth); // sign out until verified
+
+    $('verify-email-display').textContent = email;
+    clearAlert('verify-alert');
+    hideAllOverlays();
+    showOverlay('verify');
+
+  } catch (err) {
+    showAlert('signup-alert', friendlyError(err), 'error');
+  } finally {
+    setLoading('btn-signup-submit', 'spin-signup', 'signup-btn-text', false, 'Create Account');
   }
-  updateNavLoggedIn(firstName);
+});
+
+// ─── Check email verified ────────────────────────────────────
+$('btn-check-verified').addEventListener('click', async () => {
+  clearAlert('verify-alert');
+  setLoading('btn-check-verified', 'spin-verify', 'verify-btn-text', true, 'Checking…');
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      showAlert('verify-alert', 'Please log in with your email and password to continue.', 'info');
+      setLoading('btn-check-verified', 'spin-verify', 'verify-btn-text', false, "I've verified my email ✓");
+      setTimeout(() => { hideAllOverlays(); showOverlay('login'); }, 1500);
+      return;
+    }
+    await reload(user);
+    if (user.emailVerified) {
+      showAlert('verify-alert', '✓ Email verified! Opening dashboard…', 'success');
+      setTimeout(async () => { hideAllOverlays(); await openDashboard(user); }, 1000);
+    } else {
+      showAlert('verify-alert', 'Email not verified yet. Check your inbox and click the link.', 'error');
+    }
+  } catch(err) {
+    showAlert('verify-alert', friendlyError(err), 'error');
+  } finally {
+    setLoading('btn-check-verified', 'spin-verify', 'verify-btn-text', false, "I've verified my email ✓");
+  }
+});
+
+// ─── Resend verification email ───────────────────────────────
+$('btn-resend-verify').addEventListener('click', async () => {
+  try {
+    const user = auth.currentUser;
+    if (user) {
+      await sendEmailVerification(user);
+      showAlert('verify-alert', 'Verification email resent! Check your inbox.', 'success');
+    } else {
+      showAlert('verify-alert', 'Session expired. Please sign up again.', 'error');
+    }
+  } catch(err) {
+    showAlert('verify-alert', friendlyError(err), 'error');
+  }
+});
+
+// ════════════════════════════════════════════════════════════
+//  LOGIN — Email/Password
+// ════════════════════════════════════════════════════════════
+$('form-login').addEventListener('submit', async e => {
+  e.preventDefault();
+  clearAlert('login-alert');
+
+  const email = $('li-email').value.trim();
+  const pass  = $('li-pass').value;
+
+  let valid = true;
+  fieldError('err-li-email', $('li-email'), !isValidEmail(email), 'Enter a valid email address.'); if (!isValidEmail(email)) valid = false;
+  fieldError('err-li-pass',  $('li-pass'),  !pass,               'Password is required.');         if (!pass) valid = false;
+  if (!valid) return;
+
+  setLoading('btn-login-submit', 'spin-login', 'login-btn-text', true, 'Signing in…');
+
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, pass);
+    if (!cred.user.emailVerified) {
+      await signOut(auth);
+      showAlert('login-alert', 'Please verify your email first. Check your inbox for the verification link.', 'error');
+      // Offer to resend
+      setTimeout(() => {
+        $('verify-email-display').textContent = email;
+        clearAlert('verify-alert');
+        hideAllOverlays();
+        showOverlay('verify');
+      }, 2000);
+      return;
+    }
+    hideAllOverlays();
+    await openDashboard(cred.user);
+  } catch(err) {
+    showAlert('login-alert', friendlyError(err), 'error');
+  } finally {
+    setLoading('btn-login-submit', 'spin-login', 'login-btn-text', false, 'Log in');
+  }
+});
+
+// ─── Forgot Password ─────────────────────────────────────────
+$('btn-forgot-password').addEventListener('click', async () => {
+  const email = $('li-email').value.trim();
+  if (!isValidEmail(email)) {
+    showAlert('login-alert', 'Enter your email address above first, then click Forgot password.', 'info');
+    return;
+  }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    showAlert('login-alert', `Password reset email sent to ${email}. Check your inbox.`, 'success');
+  } catch(err) {
+    showAlert('login-alert', friendlyError(err), 'error');
+  }
+});
+
+// ════════════════════════════════════════════════════════════
+//  GOOGLE AUTH — Sign Up & Login (same flow)
+// ════════════════════════════════════════════════════════════
+async function handleGoogleAuth() {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const user   = result.user;
+    const isNew  = result._tokenResponse?.isNewUser;
+
+    if (isNew) {
+      const nameParts = (user.displayName || '').split(' ');
+      await saveUserToFirestore(user.uid, {
+        firstName: nameParts[0]  || '',
+        lastName:  nameParts.slice(1).join(' ') || '',
+        email:     user.email    || '',
+        state:     '',
+        provider:  'google',
+      });
+    }
+    hideAllOverlays();
+    await openDashboard(user);
+  } catch(err) {
+    if (err.code === 'auth/popup-closed-by-user') return;
+    showAlert('signup-alert', friendlyError(err), 'error');
+    showAlert('login-alert',  friendlyError(err), 'error');
+  }
 }
 
-// ─── FRIENDLY ERRORS ────────────────────────────────────────
+$('btn-google-signup').addEventListener('click', handleGoogleAuth);
+$('btn-google-login').addEventListener('click',  handleGoogleAuth);
+
+// ─── FRIENDLY ERRORS ─────────────────────────────────────────
 function friendlyError(err) {
   const map = {
-    'auth/too-many-requests':          'Too many attempts. Please wait a few minutes and try again.',
-    'auth/invalid-phone-number':       'Invalid phone number format. Include country code, e.g. 2348012345678.',
-    'auth/quota-exceeded':             'SMS quota exceeded. Please try again later.',
-    'auth/captcha-check-failed':       'reCAPTCHA check failed. Please refresh and try again.',
-    'auth/network-request-failed':     'Network error. Check your connection and try again.',
-    'auth/operation-not-allowed':      'Phone authentication is not enabled. Contact support.',
+    'auth/email-already-in-use':      'An account with this email already exists. Please log in.',
+    'auth/invalid-email':             'Invalid email address format.',
+    'auth/weak-password':             'Password must be at least 8 characters.',
+    'auth/user-not-found':            'No account found with this email. Please sign up.',
+    'auth/wrong-password':            'Incorrect password. Try again or reset your password.',
+    'auth/invalid-credential':        'Incorrect email or password. Please try again.',
+    'auth/too-many-requests':         'Too many attempts. Please wait a few minutes and try again.',
+    'auth/network-request-failed':    'Network error. Check your connection and try again.',
+    'auth/popup-blocked':             'Popup was blocked. Please allow popups for this site.',
+    'auth/cancelled-popup-request':   'Sign-in cancelled.',
+    'auth/user-disabled':             'This account has been disabled. Contact support.',
   };
   return map[err.code] || (err.message || 'Something went wrong. Please try again.');
 }
+</script>
+
 </script>
 
 <script>
